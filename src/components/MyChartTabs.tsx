@@ -124,26 +124,21 @@ const MyChartTabs: React.FC = () => {
   };
   return (
     <>
-      <Tabs
-        defaultValue="BMI"
-        className="h-96 w-full shrink "
-        orientation="vertical"
-        onValueChange={handleChange}
-      >
-        <TabsList className="flex items-center justify-center">
-          <TabsTrigger value="BMI">BMI</TabsTrigger>
-          <TabsTrigger value="ETHNICITY">ETHNICITY</TabsTrigger>
-        </TabsList>
-        <TabsContent
-          value="BMI"
-          className="flex items-center justify-center"
-        ></TabsContent>
-        <TabsContent
-          value="ETHNICITY"
-          className="flex items-center justify-center"
-        ></TabsContent>
-        <div className="h-80 w-full" ref={pieChartRefOne}></div>
-      </Tabs>
+      <div className="flex flex-row">
+        <Tabs
+          defaultValue="BMI"
+          className="h-96 w-full basis-1/6 border-r-2"
+          onValueChange={handleChange}
+        >
+          <TabsList className=" h-full bg-white flex-col float-right">
+            <TabsTrigger value="BMI">BMI</TabsTrigger>
+            <TabsTrigger value="ETHNICITY">ETHNICITY</TabsTrigger>
+          </TabsList>
+          <TabsContent value="BMI"></TabsContent>
+          <TabsContent value="ETHNICITY"></TabsContent>
+        </Tabs>
+        <div className=" w-full basis-3/4" ref={pieChartRefOne}></div>
+      </div>
     </>
   );
 };
