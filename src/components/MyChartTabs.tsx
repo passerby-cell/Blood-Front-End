@@ -66,13 +66,7 @@ const MyChartTabs: React.FC = () => {
     legend: {
       top: "bottom",
     },
-    toolbox: {
-      show: true,
-      feature: {
-        mark: { show: true },
-        saveAsImage: { show: true },
-      },
-    },
+
     series: [
       {
         name: "BMI",
@@ -133,6 +127,7 @@ const MyChartTabs: React.FC = () => {
       <Tabs
         defaultValue="BMI"
         className="h-96 w-full shrink "
+        orientation="vertical"
         onValueChange={handleChange}
       >
         <TabsList className="flex items-center justify-center">

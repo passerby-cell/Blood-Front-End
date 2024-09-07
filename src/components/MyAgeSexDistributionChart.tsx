@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import * as echarts from "echarts";
 import useResizeObserver from "@/utils/useResizeObserver.ts";
 import { stack } from "d3-shape";
+import { ribbon } from "d3";
 interface AgeSexDistributionData {
   ageRange: string;
   male: number;
@@ -47,6 +48,7 @@ const MyAgeSexDistributionChart: React.FC = () => {
         left: chartRef.current?.clientWidth
           ? chartRef.current?.clientWidth / 2 - 30
           : 0,
+
         bottom: "3%",
         containLabel: true,
       },
