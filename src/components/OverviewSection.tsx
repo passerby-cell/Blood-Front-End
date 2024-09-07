@@ -1,20 +1,10 @@
 import React from "react";
-import { Paper, Typography, Box, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 import { SxProps } from "@mui/system";
 import OverviewIcon from "@mui/icons-material/Dashboard";
-import AgeSexDistributionChart from "./AgeSexDistributionChart";
 import MyAgeSexDistributionChart from "./MyAgeSexDistributionChart";
-import ChartTabs from "./ChartTabs";
 import MyChartTabs from "./MyChartTabs";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 interface OverviewSectionProps {
   title: string;
   sx?: SxProps<Theme>;
