@@ -28,7 +28,6 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ title, sx }) => {
             }}
           ></div>
         </CardHeader>
-
         <div className="w-full columns-4xl">
           <div className=" p-5 flex items-center justify-center">
             <MyAgeSexDistributionChart />

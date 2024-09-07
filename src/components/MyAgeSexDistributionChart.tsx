@@ -25,14 +25,6 @@ const MyAgeSexDistributionChart: React.FC = () => {
   const dimensions = useResizeObserver(chartRef);
 
   const options = {
-    toolbox: {
-      feature: {
-        magicType: {
-          type: ["stack"],
-        },
-        dataView: {},
-      },
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -42,16 +34,29 @@ const MyAgeSexDistributionChart: React.FC = () => {
     legend: {
       data: ["Male", "Female"],
     },
-    grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
-    },
+    grid: [
+      {
+        left: 10,
+        right: chartRef.current?.clientWidth
+          ? chartRef.current?.clientWidth / 2 + 40
+          : 0,
+        bottom: "3%",
+        containLabel: true,
+      },
+      {
+        left: chartRef.current?.clientWidth
+          ? chartRef.current?.clientWidth / 2 - 30
+          : 0,
+        bottom: "3%",
+        containLabel: true,
+      },
+    ],
     xAxis: [
       {
         type: "value",
+        inverse: true,
       },
+      { gridIndex: 1, type: "value" },
     ],
     yAxis: [
       {
@@ -59,6 +64,26 @@ const MyAgeSexDistributionChart: React.FC = () => {
         axisTick: {
           show: false,
         },
+        axisLabel: { show: false },
+        data: [
+          "0-10",
+          "10-20",
+          "20-30",
+          "30-40",
+          "40-50",
+          "50-60",
+          "60-70",
+          "70-80",
+          ">80",
+        ],
+      },
+      {
+        gridIndex: 1,
+        type: "category",
+        axisTick: {
+          show: false,
+        },
+        axisLabel: { show: true },
         data: [
           "0-10",
           "10-20",
@@ -76,23 +101,26 @@ const MyAgeSexDistributionChart: React.FC = () => {
       {
         name: "Male",
         type: "bar",
-        stack: "total",
+
         label: {
           show: true,
+          position: "left",
         },
         emphasis: {
           focus: "series",
         },
-        data: [-120, -102, -141, -174, -190, -150, -120, -15, -10],
+        data: [120, 102, 141, 174, 190, 150, 120, 15, 10],
       },
       {
         name: "Female",
         type: "bar",
-        stack: "total",
+
         label: {
           show: true,
           position: "right",
         },
+        xAxisIndex: 1,
+        yAxisIndex: 1,
         emphasis: {
           focus: "series",
         },
@@ -110,7 +138,7 @@ const MyAgeSexDistributionChart: React.FC = () => {
 
     // 组件卸载
     return () => {
-      // myChart.dispose() 销毁实例。实例销毁后无法再被使用
+      //  销毁实例。实例销毁后无法再被使用
       chart.dispose();
     };
   }, [dimensions]);
