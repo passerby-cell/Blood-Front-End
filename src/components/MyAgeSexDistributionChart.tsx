@@ -25,10 +25,6 @@ const MyAgeSexDistributionChart: React.FC = () => {
   const dimensions = useResizeObserver(chartRef);
 
   const options = {
-    brush: {
-      toolbox: ["clear"],
-      xAxisIndex: 0,
-    },
     toolbox: {
       feature: {
         magicType: {
