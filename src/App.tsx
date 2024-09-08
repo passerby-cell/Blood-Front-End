@@ -22,7 +22,7 @@ function App() {
             <CardHeader className="inline-grid grid-cols-1 p-2">
               <div className="inline-flex items-center">
                 <WhatshotIcon sx={{ mr: 1, color: "purple" }} />
-                <CardTitle> Today's Trendings</CardTitle>
+                <CardTitle> Today's Trending</CardTitle>
               </div>
               <div
                 style={{
