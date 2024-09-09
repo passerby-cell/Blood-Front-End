@@ -6,6 +6,7 @@ import AddAlertIcon from "@mui/icons-material/AddAlert";
 import MyHematologyHistograms from "./components/MyHematologyHistograms";
 import ControlAndDisplay from "./components/ControlAndDisplay";
 import { Card, CardHeader, CardTitle } from "./components/ui/card";
+import MyControlAndDisplay from "./components/MyControlAndDisplay";
 
 function App() {
   return (
@@ -94,6 +95,7 @@ function App() {
         </div>
       </div>
       <ControlAndDisplay />
+      <MyControlAndDisplay />
     </>
   );
 }
