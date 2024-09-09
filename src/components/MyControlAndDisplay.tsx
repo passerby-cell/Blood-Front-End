@@ -1,33 +1,21 @@
 import React, { useState } from "react";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
+import "@/components/css/MyControlAndDisplay.sass";
 import TuneIcon from "@mui/icons-material/Tune";
-import NewspaperIcon from "@mui/icons-material/Newspaper";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { CardContent } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { ConfigProvider, DatePicker } from "antd";
+
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { Input } from "./ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "./ui/button";
 import {
   Select,
   SelectContent,
@@ -35,11 +23,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { cn } from "@/lib/utils";
-import { Calendar } from "./ui/calendar";
-import { format } from "date-fns";
-
+import type { DatePickerProps } from "antd";
+import dayjs from "dayjs";
 const initialDummyData = [
   {
     time: "Jan",
@@ -91,6 +76,92 @@ const initialDummyData = [
   },
 ];
 
+const BMI = [
+  {
+    label: "Underweight<18",
+    value: "Underweight",
+  },
+  {
+    label: "Normal(18-24.9)",
+    value: "Normal",
+  },
+  {
+    label: "Overweight(25-29.9)",
+    value: "Overweight",
+  },
+  {
+    label: "Obesity>30)",
+    value: "Obesity",
+  },
+];
+
+const Ethnicity = [
+  {
+    label: "White British",
+    value: "White British",
+  },
+  {
+    label: "Other White Background",
+    value: "Other White Background",
+  },
+  {
+    label: "Black Caribbean",
+    value: "Black Caribbean",
+  },
+  {
+    label: "Other Asian Background",
+    value: "Other Asian Background",
+  },
+  {
+    label: "Other Chinese",
+    value: "Other Chinese",
+  },
+  {
+    label: "Not Stated",
+    value: "Not Stated",
+  },
+  {
+    label: "White Irish",
+    value: "White Irish",
+  },
+  {
+    label: "Asian Indian",
+    value: "Asian Indian",
+  },
+  {
+    label: "Asian Pakistani",
+    value: "Asian Pakistani",
+  },
+  {
+    label: "Mixed White and Asian",
+    value: "Mixed White and Asian",
+  },
+  {
+    label: "Black African",
+    value: "Black African",
+  },
+  {
+    label: "Mixed White and Black African",
+    value: "Mixed White and Black African",
+  },
+  {
+    label: "Other Black Background",
+    value: "Other Black Background",
+  },
+  {
+    label: "Mixed White and Black Caribbean",
+    value: "Mixed White and Black Caribbean",
+  },
+  {
+    label: "Asian Bangladeshi",
+    value: "Asian Bangladeshi",
+  },
+  {
+    label: "Other Mixed Background",
+    value: "Other Mixed Background",
+  },
+];
+
 const ControlAndDisplay: React.FC = () => {
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedMetric, setSelectedMetric] = useState("WBC");
@@ -126,7 +197,6 @@ const ControlAndDisplay: React.FC = () => {
   //     setSex(event.target.value as string);
   // };
   const formSchema = z.object({
-    age: z.string(),
     sex: z.string(),
     BMIRange: z.string(),
     Ethnicity: z.string().optional(),
@@ -138,7 +208,6 @@ const ControlAndDisplay: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      age: "",
       sex: "Male",
       BMIRange: "",
       Ethnicity: "",
@@ -154,15 +223,6 @@ const ControlAndDisplay: React.FC = () => {
     console.log(values);
   }
 
-  /**
-   * 处理年龄输入框失去焦点时的事件
-   *
-   * @param event React的FocusEvent事件对象，包含了失去焦点的HTMLInputElement元素的信息
-   */
-  const handleAgeBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    const ageValue = event.target.value;
-    console.log("Age on blur:", ageValue);
-  };
   /**
    * 处理性别改变事件
    *
@@ -188,21 +248,27 @@ const ControlAndDisplay: React.FC = () => {
   const handleEthnicityChange = (value: string) => {
     console.log("Selected value:", value);
   };
-  /**
-   * 处理开始时间变化
-   *
-   * @param value 选择的日期
-   */
-  const handleStartTimeChange = (value: Date) => {
-    console.log("Selected value:", format(value, "PPP"));
+  // /**
+  //  * 处理开始时间变化
+  //  *
+  //  * @param value 选择的日期
+  //  */
+  // const handleStartTimeChange = (value: Date) => {
+  //   console.log("Selected value:", format(value, "PPP"));
+  // };
+  // /**
+  //  * 处理结束时间变更的函数
+  //  *
+  //  * @param value 结束时间值，类型为Date
+  //  */
+  // const handleEndTimeChange = (value: Date) => {
+  //   console.log("Selected value:", format(value, "PPP"));
+  // };
+  const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
   };
-  /**
-   * 处理结束时间变更的函数
-   *
-   * @param value 结束时间值，类型为Date
-   */
-  const handleEndTimeChange = (value: Date) => {
-    console.log("Selected value:", format(value, "PPP"));
+  const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log(date, dateString);
   };
   return (
     <>
@@ -227,23 +293,6 @@ const ControlAndDisplay: React.FC = () => {
               onSubmit={form.handleSubmit(onSubmit)}
               className=" grid lg:grid-cols-3 gap-12 md:grid-cols-2 gap-6 sm:grid-cols-1"
             >
-              <FormField
-                control={form.control}
-                name="age"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2  w-32 ">Age</FormLabel>
-                    <FormControl className="w-full">
-                      <Input
-                        placeholder="Age"
-                        {...field}
-                        onBlur={handleAgeBlur}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="sex"
@@ -278,7 +327,7 @@ const ControlAndDisplay: React.FC = () => {
                 name="BMIRange"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2 w-32    ">BMI Range</FormLabel>
+                    <FormLabel className=" mt-2 w-32 ">BMI Range</FormLabel>
                     <FormControl className="w-full">
                       <Select
                         onValueChange={(BMI) => {
@@ -293,8 +342,13 @@ const ControlAndDisplay: React.FC = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="xx">xx</SelectItem>
-                          <SelectItem value="xxx">xxx</SelectItem>
+                          {Object.keys(BMI).map((item, index) => {
+                            return (
+                              <SelectItem key={item} value={BMI[index].value}>
+                                {BMI[index].label}
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -322,8 +376,16 @@ const ControlAndDisplay: React.FC = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="xx">xx</SelectItem>
-                          <SelectItem value="xxx">xxx</SelectItem>
+                          {Object.keys(Ethnicity).map((item, index) => {
+                            return (
+                              <SelectItem
+                                key={item}
+                                value={Ethnicity[index].value}
+                              >
+                                {Ethnicity[index].label}
+                              </SelectItem>
+                            );
+                          })}
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -338,7 +400,7 @@ const ControlAndDisplay: React.FC = () => {
                   <FormItem className="flex flex-row items-center space-x-2">
                     <FormLabel className=" mt-2  w-32  ">Start Time</FormLabel>
                     <FormControl className="w-full">
-                      <Popover>
+                      {/* <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant={"outline"}
@@ -372,7 +434,27 @@ const ControlAndDisplay: React.FC = () => {
                             initialFocus
                           />
                         </PopoverContent>
-                      </Popover>
+                      </Popover> */}
+                      <div className="wrapper">
+                        <ConfigProvider
+                          theme={{
+                            components: {
+                              DatePicker: {
+                                activeBorderColor: "#e5e5e5",
+                              },
+                            },
+                          }}
+                        >
+                          <DatePicker
+                            className="input w-full h-9 font-normal 
+                         text-sm border-1 border-[#e5e5e5]
+                         hover:border-[#e5e5e5] font-family: inherit"
+                            onChange={onStartTimeChange}
+                            picker="month"
+                            defaultValue={dayjs(field.value)}
+                          />
+                        </ConfigProvider>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -385,7 +467,7 @@ const ControlAndDisplay: React.FC = () => {
                   <FormItem className="flex flex-row items-center space-x-2">
                     <FormLabel className=" mt-2  w-32  ">End Time</FormLabel>
                     <FormControl className="w-full">
-                      <Popover>
+                      {/* <Popover>
                         <PopoverTrigger asChild>
                           <Button
                             variant={"outline"}
@@ -418,7 +500,27 @@ const ControlAndDisplay: React.FC = () => {
                             initialFocus
                           />
                         </PopoverContent>
-                      </Popover>
+                      </Popover> */}
+                      <div className="wrapper">
+                        <ConfigProvider
+                          theme={{
+                            components: {
+                              DatePicker: {
+                                activeBorderColor: "#e5e5e5",
+                              },
+                            },
+                          }}
+                        >
+                          <DatePicker
+                            className="input w-full h-9 font-normal 
+                         text-sm border-1 border-[#e5e5e5]
+                         hover:border-[#e5e5e5] font-family: inherit"
+                            onChange={onEndTimeChange}
+                            picker="month"
+                            defaultValue={dayjs(field.value)}
+                          />
+                        </ConfigProvider>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
