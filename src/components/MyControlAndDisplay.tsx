@@ -26,6 +26,9 @@ import {
 } from "./ui/select";
 import type { DatePickerProps } from "antd";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 const initialDummyData = [
   {
     time: "Jan",
@@ -208,8 +211,8 @@ const ControlAndDisplay: React.FC = () => {
     Sex: z.string(),
     BMIRange: z.string(),
     Ethnicity: z.string().optional(),
-    startTime: z.date(),
-    endTime: z.date(),
+    startTime: z.string(),
+    endTime: z.string(),
   });
 
   // 1. Define your form.
@@ -219,8 +222,8 @@ const ControlAndDisplay: React.FC = () => {
       Sex: "",
       BMIRange: "",
       Ethnicity: "",
-      startTime: new Date(),
-      endTime: new Date(),
+      startTime: "2020-01",
+      endTime: dayjs().format("YYYY-MM"),
     },
   });
 
@@ -263,10 +266,12 @@ const ControlAndDisplay: React.FC = () => {
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
     let newSelectedTags = { ...selectedTags, startTime: dateString as string };
     setselectedTags(newSelectedTags);
+    form.setValue("startTime", dateString as string);
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
     let newSelectedTags = { ...selectedTags, endTime: dateString as string };
     setselectedTags(newSelectedTags);
+    form.setValue("endTime", dateString as string);
   };
   return (
     <>
@@ -399,41 +404,6 @@ const ControlAndDisplay: React.FC = () => {
                   <FormItem className="flex flex-row items-center space-x-2">
                     <FormLabel className=" mt-2  w-32  ">Start Time</FormLabel>
                     <FormControl className="w-full">
-                      {/* <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarMonthIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ?? undefined}
-                            onSelect={(startTime) => {
-                              if (startTime) {
-                                field.onChange(startTime);
-                                handleStartTimeChange(startTime);
-                              }
-                            }}
-                            disabled={(date) =>
-                              date?.getTime() > new Date().getTime() ||
-                              date?.getTime() < new Date("1900-01-01").getTime()
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover> */}
                       <div className="wrapper">
                         <ConfigProvider
                           theme={{
@@ -451,6 +421,11 @@ const ControlAndDisplay: React.FC = () => {
                             onChange={onStartTimeChange}
                             picker="month"
                             defaultValue={dayjs(field.value)}
+                            minDate={dayjs("1900-01", "YYYY-MM")}
+                            maxDate={dayjs(
+                              dayjs().format("YYYY-MM"),
+                              "YYYY-MM"
+                            )}
                           />
                         </ConfigProvider>
                       </div>
@@ -466,40 +441,6 @@ const ControlAndDisplay: React.FC = () => {
                   <FormItem className="flex flex-row items-center space-x-2">
                     <FormLabel className=" mt-2  w-32  ">End Time</FormLabel>
                     <FormControl className="w-full">
-                      {/* <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            <CalendarMonthIcon className="mr-2 h-4 w-4" />
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={field.value ?? undefined}
-                            onSelect={(endTime: Date | undefined) => {
-                              if (endTime) {
-                                field.onChange(endTime);
-                                handleEndTimeChange(endTime);
-                              }
-                            }}
-                            disabled={(date: Date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover> */}
                       <div className="wrapper">
                         <ConfigProvider
                           theme={{
@@ -517,6 +458,14 @@ const ControlAndDisplay: React.FC = () => {
                             onChange={onEndTimeChange}
                             picker="month"
                             defaultValue={dayjs(field.value)}
+                            minDate={dayjs(
+                              form.getValues("startTime"),
+                              "YYYY-MM"
+                            )}
+                            maxDate={dayjs(
+                              dayjs().format("YYYY-MM"),
+                              "YYYY-MM"
+                            )}
                           />
                         </ConfigProvider>
                       </div>
@@ -559,7 +508,7 @@ const ControlAndDisplay: React.FC = () => {
                         | "Ethnicity"
                         | "startTime"
                         | "endTime",
-                      ""
+                      undefined
                     );
                   }}
                 >
