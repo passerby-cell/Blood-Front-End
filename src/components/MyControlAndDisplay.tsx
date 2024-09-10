@@ -33,7 +33,7 @@ const initialDummyData = [
     HGB: 14,
     RBC: 4.5,
     diagnosis: "Diagnosis Method 1",
-    sex: "Male",
+    Sex: "Male",
   },
   {
     time: "Feb",
@@ -41,7 +41,7 @@ const initialDummyData = [
     HGB: 13.9,
     RBC: 4.6,
     diagnosis: "Diagnosis Method 2",
-    sex: "Female",
+    Sex: "Female",
   },
   {
     time: "Mar",
@@ -49,7 +49,7 @@ const initialDummyData = [
     HGB: 14.1,
     RBC: 4.7,
     diagnosis: "Diagnosis Method 3",
-    sex: "Male",
+    Sex: "Male",
   },
   {
     time: "Apr",
@@ -57,7 +57,7 @@ const initialDummyData = [
     HGB: 14.2,
     RBC: 4.8,
     diagnosis: "Diagnosis Method 1",
-    sex: "Female",
+    Sex: "Female",
   },
   {
     time: "May",
@@ -65,7 +65,7 @@ const initialDummyData = [
     HGB: 14.3,
     RBC: 4.9,
     diagnosis: "Diagnosis Method 4",
-    sex: "Male",
+    Sex: "Male",
   },
   {
     time: "Jun",
@@ -73,7 +73,7 @@ const initialDummyData = [
     HGB: 14.5,
     RBC: 5.0,
     diagnosis: "Diagnosis Method 2",
-    sex: "Female",
+    Sex: "Female",
   },
 ];
 
@@ -165,7 +165,7 @@ const Ethnicity = [
 
 const ControlAndDisplay: React.FC = () => {
   const [selectedTags, setselectedTags] = useState({
-    sex: "initial",
+    Sex: "initial",
     BMIRange: "initial",
     Ethnicity: "initial",
     startTime: "initial",
@@ -173,18 +173,18 @@ const ControlAndDisplay: React.FC = () => {
   });
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedMetric, setSelectedMetric] = useState("WBC");
-  const [sex] = useState("");
+  const [Sex] = useState("");
   const [filteredData, setFilteredData] = useState(initialDummyData);
 
   const handleFilterApply = () => {
-    const newFilter = `Sex: ${sex}`;
-    if (!selectedFilters.includes(newFilter) && sex) {
+    const newFilter = `Sex: ${Sex}`;
+    if (!selectedFilters.includes(newFilter) && Sex) {
       setSelectedFilters((prev) => [...prev, newFilter]);
     }
 
-    // Apply filtering based on the selected sex
+    // Apply filtering based on the selected Sex
     const newFilteredData = initialDummyData.filter(
-      (item) => !sex || item.sex === sex
+      (item) => !Sex || item.Sex === Sex
     );
     setFilteredData(newFilteredData);
   };
@@ -205,7 +205,7 @@ const ControlAndDisplay: React.FC = () => {
   //     setSex(event.target.value as string);
   // };
   const formSchema = z.object({
-    sex: z.string(),
+    Sex: z.string(),
     BMIRange: z.string(),
     Ethnicity: z.string().optional(),
     startTime: z.date(),
@@ -216,7 +216,7 @@ const ControlAndDisplay: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sex: "",
+      Sex: "",
       BMIRange: "",
       Ethnicity: "",
       startTime: new Date(),
@@ -237,7 +237,7 @@ const ControlAndDisplay: React.FC = () => {
    * @param value 性别值
    */
   const handleSexChange = (value: string) => {
-    let newSelectedTags = { ...selectedTags, sex: value };
+    let newSelectedTags = { ...selectedTags, Sex: value };
     setselectedTags(newSelectedTags);
   };
   /**
@@ -294,21 +294,21 @@ const ControlAndDisplay: React.FC = () => {
             >
               <FormField
                 control={form.control}
-                name="sex"
+                name="Sex"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center space-x-2">
                     <FormLabel className=" mt-2  w-32  ">Sex</FormLabel>
                     <FormControl className="w-full">
                       <Select
-                        onValueChange={(sex) => {
-                          field.onChange(sex);
-                          handleSexChange(sex);
+                        onValueChange={(Sex) => {
+                          field.onChange(Sex);
+                          handleSexChange(Sex);
                         }}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a sex to display" />
+                            <SelectValue placeholder="Select a Sex to display" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -528,12 +528,12 @@ const ControlAndDisplay: React.FC = () => {
             </form>
           </CardContent>
         </Form>
-        <div className=" tag-wapper grid gap-4 justify-items-start lg:grid-cols-8 md:grid-cols-4 grid-cols-2 m-4">
+        <div className=" tag-wapper grid gap-2 justify-items-start lg:grid-cols-3 md:grid-rows-2 grid-rows-5 m-4">
           {Object.keys(selectedTags).map((value, index) => {
             if (
               selectedTags[
                 value as
-                  | "sex"
+                  | "Sex"
                   | "BMIRange"
                   | "Ethnicity"
                   | "startTime"
@@ -544,7 +544,7 @@ const ControlAndDisplay: React.FC = () => {
                 <Tag
                   color="#2db7f5"
                   key={index}
-                  className="text-xl w-full text-center"
+                  className="truncate text-xl w-full text-center"
                   closable
                   onClose={() => {
                     let newSelectedTags = {
@@ -554,7 +554,7 @@ const ControlAndDisplay: React.FC = () => {
                     setselectedTags(newSelectedTags);
                     form.setValue(
                       value as
-                        | "sex"
+                        | "Sex"
                         | "BMIRange"
                         | "Ethnicity"
                         | "startTime"
@@ -563,10 +563,12 @@ const ControlAndDisplay: React.FC = () => {
                     );
                   }}
                 >
+                  {value}
+                  {": "}
                   {
                     selectedTags[
                       value as
-                        | "sex"
+                        | "Sex"
                         | "BMIRange"
                         | "Ethnicity"
                         | "startTime"
