@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle } from "./ui/card";
 import { CardContent } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { ConfigProvider, DatePicker } from "antd";
+import { Tag } from "antd";
 
 import {
   Form,
@@ -163,6 +164,13 @@ const Ethnicity = [
 ];
 
 const ControlAndDisplay: React.FC = () => {
+  const [selectedTags, setselectedTags] = useState({
+    sex: "initial",
+    BMIRange: "initial",
+    Ethnicity: "initial",
+    startTime: "initial",
+    endTime: "initial",
+  });
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [selectedMetric, setSelectedMetric] = useState("WBC");
   const [sex] = useState("");
@@ -208,7 +216,7 @@ const ControlAndDisplay: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      sex: "Male",
+      sex: "",
       BMIRange: "",
       Ethnicity: "",
       startTime: new Date(),
@@ -229,7 +237,8 @@ const ControlAndDisplay: React.FC = () => {
    * @param value 性别值
    */
   const handleSexChange = (value: string) => {
-    console.log("Selected value:", value);
+    let newSelectedTags = { ...selectedTags, sex: value };
+    setselectedTags(newSelectedTags);
   };
   /**
    * 处理BMI值变化
@@ -237,7 +246,8 @@ const ControlAndDisplay: React.FC = () => {
    * @param value 变化的BMI值，类型为字符串
    */
   const handleBMIChange = (value: string) => {
-    console.log("Selected value:", value);
+    let newSelectedTags = { ...selectedTags, BMIRange: value };
+    setselectedTags(newSelectedTags);
   };
   /**
    * 处理民族变化
@@ -246,29 +256,17 @@ const ControlAndDisplay: React.FC = () => {
    * @returns 无返回值
    */
   const handleEthnicityChange = (value: string) => {
-    console.log("Selected value:", value);
+    let newSelectedTags = { ...selectedTags, Ethnicity: value };
+    setselectedTags(newSelectedTags);
   };
-  // /**
-  //  * 处理开始时间变化
-  //  *
-  //  * @param value 选择的日期
-  //  */
-  // const handleStartTimeChange = (value: Date) => {
-  //   console.log("Selected value:", format(value, "PPP"));
-  // };
-  // /**
-  //  * 处理结束时间变更的函数
-  //  *
-  //  * @param value 结束时间值，类型为Date
-  //  */
-  // const handleEndTimeChange = (value: Date) => {
-  //   console.log("Selected value:", format(value, "PPP"));
-  // };
+
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+    let newSelectedTags = { ...selectedTags, startTime: dateString };
+    setselectedTags(newSelectedTags);
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
-    console.log(date, dateString);
+    let newSelectedTags = { ...selectedTags, endTime: dateString };
+    setselectedTags(newSelectedTags);
   };
   return (
     <>
@@ -529,6 +527,32 @@ const ControlAndDisplay: React.FC = () => {
             </form>
           </CardContent>
         </Form>
+        <div className="tag-wapper w-full   grid gap-4 justify-items-start lg:grid-cols-8 md:grid-cols-4 grid-cols-2 m-4">
+          {Object.keys(selectedTags).map((value, index) => {
+            if (selectedTags[value] !== "initial") {
+              return (
+                <Tag
+                  color="#2db7f5"
+                  key={index}
+                  className="text-xl w-full text-center"
+                  closable
+                  onClose={() => {
+                    let newSelectedTags = {
+                      ...selectedTags,
+                      [value]: "initial",
+                    };
+                    setselectedTags(newSelectedTags);
+                    form.setValue(value, "");
+                  }}
+                >
+                  {selectedTags[value]}
+                </Tag>
+              );
+            } else {
+              return <></>;
+            }
+          })}
+        </div>
       </Card>
     </>
   );
