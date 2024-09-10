@@ -7,6 +7,7 @@ import MyHematologyHistograms from "./components/MyHematologyHistograms";
 import ControlAndDisplay from "./components/ControlAndDisplay";
 import { Card, CardHeader, CardTitle } from "./components/ui/card";
 import MyControlAndDisplay from "./components/MyControlAndDisplay";
+import MyControlAndDisplayWithoutForm from "./components/MyControlAndDisplayWithoutForm";
 
 function App() {
   return (
@@ -96,6 +97,7 @@ function App() {
       </div>
       <ControlAndDisplay />
       <MyControlAndDisplay />
+      <MyControlAndDisplayWithoutForm />
     </>
   );
 }
