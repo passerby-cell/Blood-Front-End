@@ -261,11 +261,11 @@ const ControlAndDisplay: React.FC = () => {
   };
 
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
-    let newSelectedTags = { ...selectedTags, startTime: dateString };
+    let newSelectedTags = { ...selectedTags, startTime: dateString as string };
     setselectedTags(newSelectedTags);
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
-    let newSelectedTags = { ...selectedTags, endTime: dateString };
+    let newSelectedTags = { ...selectedTags, endTime: dateString as string };
     setselectedTags(newSelectedTags);
   };
   return (
@@ -285,6 +285,7 @@ const ControlAndDisplay: React.FC = () => {
             }}
           ></div>
         </CardHeader>
+
         <Form {...form}>
           <CardContent>
             <form
@@ -527,9 +528,18 @@ const ControlAndDisplay: React.FC = () => {
             </form>
           </CardContent>
         </Form>
-        <div className="tag-wapper w-full   grid gap-4 justify-items-start lg:grid-cols-8 md:grid-cols-4 grid-cols-2 m-4">
+        <div className=" tag-wapper grid gap-4 justify-items-start lg:grid-cols-8 md:grid-cols-4 grid-cols-2 m-4">
           {Object.keys(selectedTags).map((value, index) => {
-            if (selectedTags[value] !== "initial") {
+            if (
+              selectedTags[
+                value as
+                  | "sex"
+                  | "BMIRange"
+                  | "Ethnicity"
+                  | "startTime"
+                  | "endTime"
+              ] !== "initial"
+            ) {
               return (
                 <Tag
                   color="#2db7f5"
@@ -542,10 +552,27 @@ const ControlAndDisplay: React.FC = () => {
                       [value]: "initial",
                     };
                     setselectedTags(newSelectedTags);
-                    form.setValue(value, "");
+                    form.setValue(
+                      value as
+                        | "sex"
+                        | "BMIRange"
+                        | "Ethnicity"
+                        | "startTime"
+                        | "endTime",
+                      ""
+                    );
                   }}
                 >
-                  {selectedTags[value]}
+                  {
+                    selectedTags[
+                      value as
+                        | "sex"
+                        | "BMIRange"
+                        | "Ethnicity"
+                        | "startTime"
+                        | "endTime"
+                    ]
+                  }
                 </Tag>
               );
             } else {
