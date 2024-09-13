@@ -3,20 +3,9 @@ import "@/components/css/MyControlAndDisplay.sass";
 import TuneIcon from "@mui/icons-material/Tune";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { CardContent } from "@mui/material";
-import { useForm } from "react-hook-form";
 import { ConfigProvider, DatePicker } from "antd";
 import { Tag } from "antd";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Select,
   SelectContent,
@@ -174,66 +163,14 @@ const ControlAndDisplay: React.FC = () => {
     startTime: "initial",
     endTime: "initial",
   });
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [selectedMetric, setSelectedMetric] = useState("WBC");
-  const [Sex] = useState("");
-  const [filteredData, setFilteredData] = useState(initialDummyData);
 
-  const handleFilterApply = () => {
-    const newFilter = `Sex: ${Sex}`;
-    if (!selectedFilters.includes(newFilter) && Sex) {
-      setSelectedFilters((prev) => [...prev, newFilter]);
-    }
-
-    // Apply filtering based on the selected Sex
-    const newFilteredData = initialDummyData.filter(
-      (item) => !Sex || item.Sex === Sex
-    );
-    setFilteredData(newFilteredData);
-  };
-
-  const handleChipDelete = (chipToDelete: string) => {
-    setSelectedFilters((chips) =>
-      chips.filter((chip) => chip !== chipToDelete)
-    );
-    // Reset to initial data when a filter is removed
-    setFilteredData(initialDummyData);
-  };
-
-  const handleMetricChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedMetric(event.target.value);
-  };
-
-  // const handleSexChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-  //     setSex(event.target.value as string);
-  // };
-  const formSchema = z.object({
-    Sex: z.string(),
-    BMIRange: z.string(),
-    Ethnicity: z.string().optional(),
-    startTime: z.string(),
-    endTime: z.string(),
+  const [initialValue, setinitialValue] = useState({
+    Sex: "",
+    BMIRange: "",
+    Ethnicity: "",
+    startTime: "2020-01",
+    endTime: dayjs().format("YYYY-MM"),
   });
-
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      Sex: "",
-      BMIRange: "",
-      Ethnicity: "",
-      startTime: "2020-01",
-      endTime: dayjs().format("YYYY-MM"),
-    },
-  });
-
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  }
-
   /**
    * 处理性别改变事件
    *
@@ -242,6 +179,7 @@ const ControlAndDisplay: React.FC = () => {
   const handleSexChange = (value: string) => {
     let newSelectedTags = { ...selectedTags, Sex: value };
     setselectedTags(newSelectedTags);
+    setinitialValue({ ...initialValue, Sex: value });
   };
   /**
    * 处理BMI值变化
@@ -251,6 +189,7 @@ const ControlAndDisplay: React.FC = () => {
   const handleBMIChange = (value: string) => {
     let newSelectedTags = { ...selectedTags, BMIRange: value };
     setselectedTags(newSelectedTags);
+    setinitialValue({ ...initialValue, BMIRange: value });
   };
   /**
    * 处理民族变化
@@ -261,17 +200,21 @@ const ControlAndDisplay: React.FC = () => {
   const handleEthnicityChange = (value: string) => {
     let newSelectedTags = { ...selectedTags, Ethnicity: value };
     setselectedTags(newSelectedTags);
+    setinitialValue({ ...initialValue, Ethnicity: value });
   };
 
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
     let newSelectedTags = { ...selectedTags, startTime: dateString as string };
     setselectedTags(newSelectedTags);
-    form.setValue("startTime", dateString as string);
+    setinitialValue({ ...initialValue, startTime: dateString as string });
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
     let newSelectedTags = { ...selectedTags, endTime: dateString as string };
     setselectedTags(newSelectedTags);
-    form.setValue("endTime", dateString as string);
+    console.log("newSelectedTags", newSelectedTags);
+    let newInitialValue = { ...initialValue, endTime: dateString as string };
+    setinitialValue(newInitialValue);
+    console.log("initialValue", initialValue);
   };
   return (
     <>
@@ -291,193 +234,118 @@ const ControlAndDisplay: React.FC = () => {
           ></div>
         </CardHeader>
 
-        <Form {...form}>
-          <CardContent>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className=" grid lg:grid-cols-3 gap-12 md:grid-cols-2 gap-6 sm:grid-cols-1"
+        <CardContent>
+          <div className=" grid lg:grid-cols-3 gap-12 md:grid-cols-2 gap-6 sm:grid-cols-1">
+            <Select
+              onValueChange={(Sex) => {
+                console.log("Sex", Sex);
+                handleSexChange(Sex);
+              }}
+              value={initialValue.Sex}
             >
-              <FormField
-                control={form.control}
-                name="Sex"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2  w-32  ">Sex</FormLabel>
-                    <FormControl className="w-full">
-                      <Select
-                        onValueChange={(Sex) => {
-                          field.onChange(Sex);
-                          handleSexChange(Sex);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a Sex to display" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="Female">Female</SelectItem>
-                          <SelectItem value="Male">Male</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="BMIRange"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2 w-32 ">BMI Range</FormLabel>
-                    <FormControl className="w-full">
-                      <Select
-                        onValueChange={(BMI) => {
-                          field.onChange(BMI);
-                          handleBMIChange(BMI);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a MBI range to display" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.keys(BMI).map((item, index) => {
-                            return (
-                              <SelectItem key={item} value={BMI[index].value}>
-                                {BMI[index].label}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="Ethnicity"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2  w-32  ">Ethnicity</FormLabel>
-                    <FormControl className="w-full">
-                      <Select
-                        onValueChange={(Ethnicity) => {
-                          field.onChange(Ethnicity);
-                          handleEthnicityChange(Ethnicity);
-                        }}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a Ethnicity to display" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.keys(Ethnicity).map((item, index) => {
-                            return (
-                              <SelectItem
-                                key={item}
-                                value={Ethnicity[index].value}
-                              >
-                                {Ethnicity[index].label}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="startTime"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2  w-32  ">Start Time</FormLabel>
-                    <FormControl className="w-full">
-                      <div className="wrapper ">
-                        <ConfigProvider
-                          theme={{
-                            components: {
-                              DatePicker: {
-                                activeBorderColor: "#e5e5e5",
-                              },
-                            },
-                          }}
-                        >
-                          <DatePicker
-                            className="input w-full h-9 font-normal 
+              <SelectTrigger>
+                <SelectValue placeholder="Select a Sex to display" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="Female">Female</SelectItem>
+                <SelectItem value="Male">Male</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              onValueChange={(BMI) => {
+                handleBMIChange(BMI);
+              }}
+              value={initialValue.BMIRange}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a MBI range to display" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {Object.keys(BMI).map((item, index) => {
+                  return (
+                    <SelectItem key={item} value={BMI[index].value}>
+                      {BMI[index].label}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+
+            <Select
+              onValueChange={(Ethnicity) => {
+                handleEthnicityChange(Ethnicity);
+              }}
+              value={initialValue.Ethnicity}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a Ethnicity to display" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {Object.keys(Ethnicity).map((item, index) => {
+                  return (
+                    <SelectItem key={item} value={Ethnicity[index].value}>
+                      {Ethnicity[index].label}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+
+            <div className="wrapper ">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    DatePicker: {
+                      activeBorderColor: "#e5e5e5",
+                    },
+                  },
+                }}
+              >
+                <DatePicker
+                  allowClear={false}
+                  className="input w-full h-9 font-normal 
                          text-sm border-1 border-[#e5e5e5]
                          hover:border-[#e5e5e5] font-family: inherit"
-                            onChange={onStartTimeChange}
-                            picker="month"
-                            defaultValue={dayjs(field.value)}
-                            minDate={dayjs("1900-01", "YYYY-MM")}
-                            maxDate={dayjs(
-                              dayjs().format("YYYY-MM"),
-                              "YYYY-MM"
-                            )}
-                          />
-                        </ConfigProvider>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="endTime"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2">
-                    <FormLabel className=" mt-2  w-32  ">End Time</FormLabel>
-                    <FormControl className="w-full">
-                      <div className="wrapper">
-                        <ConfigProvider
-                          theme={{
-                            components: {
-                              DatePicker: {
-                                activeBorderColor: "#e5e5e5",
-                              },
-                            },
-                          }}
-                        >
-                          <DatePicker
-                            className="input w-full h-9 font-normal 
+                  onChange={onStartTimeChange}
+                  picker="month"
+                  value={dayjs(initialValue.startTime)}
+                  minDate={dayjs("1900-01", "YYYY-MM")}
+                  maxDate={dayjs(dayjs().format("YYYY-MM"), "YYYY-MM")}
+                />
+              </ConfigProvider>
+            </div>
+
+            <div className="wrapper">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    DatePicker: {
+                      activeBorderColor: "#e5e5e5",
+                    },
+                  },
+                }}
+              >
+                <DatePicker
+                  allowClear={false}
+                  className="input w-full h-9 font-normal 
                          text-sm border-1 border-[#e5e5e5]
                          hover:border-[#e5e5e5] font-family: inherit"
-                            onChange={onEndTimeChange}
-                            picker="month"
-                            defaultValue={dayjs(field.value)}
-                            minDate={dayjs(
-                              form.getValues("startTime"),
-                              "YYYY-MM"
-                            )}
-                            maxDate={dayjs(
-                              dayjs().format("YYYY-MM"),
-                              "YYYY-MM"
-                            )}
-                          />
-                        </ConfigProvider>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </form>
-          </CardContent>
-        </Form>
-        <div className=" tag-wapper grid gap-2 justify-items-start lg:grid-cols-3 md:grid-rows-2 grid-rows-5 m-4">
+                  onChange={onEndTimeChange}
+                  picker="month"
+                  value={dayjs(initialValue.endTime)}
+                  minDate={dayjs(initialValue.startTime, "YYYY-MM")}
+                  maxDate={dayjs(dayjs().format("YYYY-MM"), "YYYY-MM")}
+                />
+              </ConfigProvider>
+            </div>
+          </div>
+        </CardContent>
+
+        <div className=" tag-wapper grid gap-2 justify-items-start lg:grid-cols-3 md:grid-rows-2 grid-rows-5 m-2">
           {Object.keys(selectedTags).map((value, index) => {
             if (
               selectedTags[
@@ -498,18 +366,21 @@ const ControlAndDisplay: React.FC = () => {
                   onClose={() => {
                     let newSelectedTags = {
                       ...selectedTags,
-                      [value]: "initial",
+                      [value]: "",
                     };
+
                     setselectedTags(newSelectedTags);
-                    form.setValue(
-                      value as
-                        | "Sex"
-                        | "BMIRange"
-                        | "Ethnicity"
-                        | "startTime"
-                        | "endTime",
-                      undefined
-                    );
+                    let newInitialValue = {
+                      ...initialValue,
+                      [value]: "",
+                    };
+                    if (value === "startTime") {
+                      newInitialValue.startTime = "2020-01";
+                    } else if (value === "endTime") {
+                      newInitialValue.endTime = dayjs().format("YYYY-MM");
+                    }
+                    // console.log("newInitialValue", newInitialValue);
+                    setinitialValue(newInitialValue);
                   }}
                 >
                   {value}
