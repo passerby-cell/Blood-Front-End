@@ -204,17 +204,19 @@ const ControlAndDisplay: React.FC = () => {
   };
 
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log("dateString", dateString);
     let newSelectedTags = { ...selectedTags, startTime: dateString as string };
     setselectedTags(newSelectedTags);
     setinitialValue({ ...initialValue, startTime: dateString as string });
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
+    console.log("dateString", dateString);
     let newSelectedTags = { ...selectedTags, endTime: dateString as string };
     setselectedTags(newSelectedTags);
     console.log("newSelectedTags", newSelectedTags);
     let newInitialValue = { ...initialValue, endTime: dateString as string };
     setinitialValue(newInitialValue);
-    console.log("initialValue", initialValue);
+    console.log("initialValue", newInitialValue);
   };
   return (
     <>
@@ -368,7 +370,6 @@ const ControlAndDisplay: React.FC = () => {
                       ...selectedTags,
                       [value]: "",
                     };
-
                     setselectedTags(newSelectedTags);
                     let newInitialValue = {
                       ...initialValue,
@@ -379,7 +380,6 @@ const ControlAndDisplay: React.FC = () => {
                     } else if (value === "endTime") {
                       newInitialValue.endTime = dayjs().format("YYYY-MM");
                     }
-                    // console.log("newInitialValue", newInitialValue);
                     setinitialValue(newInitialValue);
                   }}
                 >
