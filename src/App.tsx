@@ -96,7 +96,7 @@ function App() {
         </div>
       </div>
       <ControlAndDisplay />
-      <MyControlAndDisplay />
+      {/* <MyControlAndDisplay /> */}
       <MyControlAndDisplayWithoutForm />
     </>
   );

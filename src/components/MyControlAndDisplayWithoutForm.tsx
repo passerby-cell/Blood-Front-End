@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle } from "./ui/card";
 import { CardContent } from "@mui/material";
 import { ConfigProvider, DatePicker } from "antd";
 import { Tag } from "antd";
-
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,15 @@ import {
 import type { DatePickerProps } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 dayjs.extend(customParseFormat);
 const initialDummyData = [
@@ -401,6 +410,74 @@ const ControlAndDisplay: React.FC = () => {
               return <></>;
             }
           })}
+        </div>
+      </Card>
+      <Card className=" m-5">
+        <CardHeader className="inline-grid grid-cols-1 p-2">
+          <div className="inline-flex items-center">
+            <NewspaperIcon sx={{ mr: 1, color: "purple" }} />
+            <CardTitle>Trends</CardTitle>
+          </div>
+          <div
+            style={{
+              float: "left",
+              width: "100%",
+              height: 2,
+              backgroundColor: "purple",
+            }}
+          ></div>
+        </CardHeader>
+        <div className="w-full p-4 grid lg:grid-cols-8 gap-4 md:lg:grid-cols-8 gap-4 sm:grid-cols-1">
+          <div className="lg:col-span-2 md:col-span-2 sm:col-span-1">
+            <h1 className="">Top 5 Diagnosis Methods</h1>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Diagnosis</TableHead>
+                  <TableHead>Count</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="flex flex-row">
+                    <div className="bg-[#4caf50] w-4 h-4 rounded-xl mr-2"></div>
+                    Normal
+                  </TableCell>
+                  <TableCell>1250</TableCell>
+                </TableRow>
+
+                <TableRow>
+                  <TableCell className="flex flex-row">
+                    <div className="bg-[#ffc008] w-4 h-4 rounded-xl mr-2"></div>
+                    Mild Anemia
+                  </TableCell>
+                  <TableCell>450</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="flex flex-row">
+                    <div className="bg-[#ff9800] w-4 h-4 rounded-xl mr-2"></div>
+                    Moderate Anemia
+                  </TableCell>
+                  <TableCell>200</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="flex flex-row">
+                    <div className="bg-[#f44336] w-4 h-4 rounded-xl mr-2"></div>
+                    Severe Anemia
+                  </TableCell>
+                  <TableCell>80</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="flex flex-row">
+                    <div className="bg-[#9c27b0] w-4 h-4 rounded-xl mr-2"></div>
+                    Polycythemia
+                  </TableCell>
+                  <TableCell>70</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+          <div className="w-full h-28 lg:col-span-6 md:col-span-6 sm:col-span-1 bg-black"></div>
         </div>
       </Card>
     </>
