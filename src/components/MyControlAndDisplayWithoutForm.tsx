@@ -32,56 +32,6 @@ import {
 import useResizeObserver from "@/utils/useResizeObserver";
 
 dayjs.extend(customParseFormat);
-const initialDummyData = [
-  {
-    time: "Jan",
-    WBC: 6000,
-    HGB: 14,
-    RBC: 4.5,
-    diagnosis: "Diagnosis Method 1",
-    Sex: "Male",
-  },
-  {
-    time: "Feb",
-    WBC: 6200,
-    HGB: 13.9,
-    RBC: 4.6,
-    diagnosis: "Diagnosis Method 2",
-    Sex: "Female",
-  },
-  {
-    time: "Mar",
-    WBC: 6100,
-    HGB: 14.1,
-    RBC: 4.7,
-    diagnosis: "Diagnosis Method 3",
-    Sex: "Male",
-  },
-  {
-    time: "Apr",
-    WBC: 6300,
-    HGB: 14.2,
-    RBC: 4.8,
-    diagnosis: "Diagnosis Method 1",
-    Sex: "Female",
-  },
-  {
-    time: "May",
-    WBC: 6400,
-    HGB: 14.3,
-    RBC: 4.9,
-    diagnosis: "Diagnosis Method 4",
-    Sex: "Male",
-  },
-  {
-    time: "Jun",
-    WBC: 6500,
-    HGB: 14.5,
-    RBC: 5.0,
-    diagnosis: "Diagnosis Method 2",
-    Sex: "Female",
-  },
-];
 
 const BMI = [
   {
@@ -168,7 +118,16 @@ const Ethnicity = [
     value: "Other Mixed Background",
   },
 ];
-
+interface LineChartColorProps {
+  WBC: string;
+  HGB: string;
+  RBC: string;
+}
+const lineChartColor: LineChartColorProps = {
+  WBC: "#2db7f5",
+  HGB: "#ff9800",
+  RBC: "#4caf50",
+};
 const ControlAndDisplay: React.FC = () => {
   const lineChartRef = useRef<HTMLDivElement | null>(null);
   const dimensions = useResizeObserver(lineChartRef);
@@ -178,18 +137,28 @@ const ControlAndDisplay: React.FC = () => {
       trigger: "axis",
     },
     legend: {
-      data: ["WBC", "HGB", "RBC"],
+      data: ["WBC"],
     },
     grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
+      left: "8%",
+      right: "6%",
+      bottom: "0%",
       containLabel: true,
     },
     xAxis: {
       type: "category",
       boundaryGap: false,
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: [
+        "2024-01",
+        "2024-02",
+        "2024-03",
+        "2024-04",
+        "2024-05",
+        "2024-06",
+        "2024-07",
+        "2024-08",
+        "2024-09",
+      ],
     },
     yAxis: [
       {
@@ -198,7 +167,7 @@ const ControlAndDisplay: React.FC = () => {
         nameLocation: "center", // (单位个也就是在在Y轴的最顶部)
         //单位的样式设置
         nameTextStyle: {
-          padding: [0, 0, 20, 0], //间距分别是 上 右 下 左
+          padding: [0, 0, 35, 0], //间距分别是 上 右 下 左
         },
       },
     ],
@@ -206,21 +175,8 @@ const ControlAndDisplay: React.FC = () => {
       {
         name: "WBC",
         type: "line",
-
-        data: [120, 132, 101, 134, 90, 230, 210],
-      },
-      {
-        name: "HGB",
-        type: "line",
-
-        data: [220, 182, 191, 234, 290, 330, 310],
-      },
-
-      {
-        name: "RBC",
-        type: "line",
-
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        data: [120, 132, 101, 134, 90, 230, 210, 220, 123],
+        color: "#2db7f5",
       },
     ],
   };
@@ -238,11 +194,50 @@ const ControlAndDisplay: React.FC = () => {
       chart.dispose();
     };
   }, [dimensions]);
+  function randArray(len: number, min: number, max: number) {
+    return Array.from(
+      { length: len },
+      (v) => Math.floor(Math.random() * (max - min)) + min
+    );
+  }
+
+  const monthsDiffArray = (startDate: string, endDate: string): string[] => {
+    // 将输入的 yyyy - mm 格式转换为 Day.js 可识别的日期格式
+    let start = dayjs(startDate);
+    let end = dayjs(endDate);
+    let months: string[] = [];
+    let currentDate = start;
+
+    while (currentDate.isBefore(end) || currentDate.isSame(end)) {
+      months.push(currentDate.format("YYYY - MM"));
+      currentDate = currentDate.add(1, "month");
+    }
+    return months;
+  };
+  const handleChange = (metric?: keyof LineChartColorProps) => {
+    console.log("selectedTags", selectedTags);
+    const chart = echarts.init(lineChartRef.current);
+    const start = dayjs(selectedTags.startTime).format("YYYY-MM");
+    const end = dayjs(selectedTags.endTime).format("YYYY-MM");
+    const diff = dayjs(end).diff(dayjs(start), "month") + 1;
+    console.log("diff", diff);
+    const xAxis = monthsDiffArray(start, end);
+    console.log("xAxis", xAxis);
+    if (metric) {
+      options.series[0].name = metric;
+      options.yAxis[0].name = metric + "(x10^12/L)";
+      options.series[0].color = lineChartColor[metric];
+      options.legend.data = [metric];
+    }
+    options.series[0].data = randArray(diff, 10, 200);
+    options.xAxis.data = xAxis;
+    chart.setOption(options);
+  };
   const [selectedTags, setselectedTags] = useState({
     Sex: "initial",
     BMIRange: "initial",
     Ethnicity: "initial",
-    startTime: "2020-01",
+    startTime: "2024-01",
     endTime: dayjs().format("YYYY-MM"),
   });
 
@@ -250,7 +245,7 @@ const ControlAndDisplay: React.FC = () => {
     Sex: "",
     BMIRange: "",
     Ethnicity: "",
-    startTime: "2020-01",
+    startTime: "2024-01",
     endTime: dayjs().format("YYYY-MM"),
   });
   /**
@@ -262,6 +257,7 @@ const ControlAndDisplay: React.FC = () => {
     let newSelectedTags = { ...selectedTags, Sex: value };
     setselectedTags(newSelectedTags);
     setinitialValue({ ...initialValue, Sex: value });
+    handleChange();
   };
   /**
    * 处理BMI值变化
@@ -272,6 +268,7 @@ const ControlAndDisplay: React.FC = () => {
     let newSelectedTags = { ...selectedTags, BMIRange: value };
     setselectedTags(newSelectedTags);
     setinitialValue({ ...initialValue, BMIRange: value });
+    handleChange();
   };
   /**
    * 处理民族变化
@@ -283,6 +280,7 @@ const ControlAndDisplay: React.FC = () => {
     let newSelectedTags = { ...selectedTags, Ethnicity: value };
     setselectedTags(newSelectedTags);
     setinitialValue({ ...initialValue, Ethnicity: value });
+    handleChange();
   };
 
   const onStartTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
@@ -290,6 +288,7 @@ const ControlAndDisplay: React.FC = () => {
     let newSelectedTags = { ...selectedTags, startTime: dateString as string };
     setselectedTags(newSelectedTags);
     setinitialValue({ ...initialValue, startTime: dateString as string });
+    handleChange();
   };
   const onEndTimeChange: DatePickerProps["onChange"] = (date, dateString) => {
     console.log("dateString", dateString);
@@ -299,6 +298,7 @@ const ControlAndDisplay: React.FC = () => {
     let newInitialValue = { ...initialValue, endTime: dateString as string };
     setinitialValue(newInitialValue);
     console.log("initialValue", newInitialValue);
+    handleChange();
   };
   return (
     <>
@@ -458,7 +458,7 @@ const ControlAndDisplay: React.FC = () => {
                       [value]: "",
                     };
                     if (value === "startTime") {
-                      newInitialValue.startTime = "2020-01";
+                      newInitialValue.startTime = "2024-01";
                     } else if (value === "endTime") {
                       newInitialValue.endTime = dayjs().format("YYYY-MM");
                     }
@@ -552,7 +552,11 @@ const ControlAndDisplay: React.FC = () => {
           </div>
           <div className="w-full lg:col-span-6 md:col-span-6 sm:col-span-1 ">
             <h1 className="w-full mt-2 mb-2 size-7">Select Metric</h1>
-            <RadioGroup defaultValue="WBC" className="flex flex-row">
+            <RadioGroup
+              onValueChange={handleChange}
+              defaultValue="WBC"
+              className="flex flex-row"
+            >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="WBC" id="WBC" />
                 <Label htmlFor="WBC">WBC</Label>
