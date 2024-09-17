@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "@/components/css/MyControlAndDisplay.sass";
 import TuneIcon from "@mui/icons-material/Tune";
 import { Card, CardHeader, CardTitle } from "./ui/card";
@@ -6,6 +6,7 @@ import { CardContent } from "@mui/material";
 import { ConfigProvider, DatePicker } from "antd";
 import { Tag } from "antd";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
+import * as echarts from "echarts";
 import {
   Select,
   SelectContent,
@@ -13,6 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
 import type { DatePickerProps } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -25,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import useResizeObserver from "@/utils/useResizeObserver";
 
 dayjs.extend(customParseFormat);
 const initialDummyData = [
@@ -165,6 +170,74 @@ const Ethnicity = [
 ];
 
 const ControlAndDisplay: React.FC = () => {
+  const lineChartRef = useRef<HTMLDivElement | null>(null);
+  const dimensions = useResizeObserver(lineChartRef);
+
+  const options = {
+    tooltip: {
+      trigger: "axis",
+    },
+    legend: {
+      data: ["WBC", "HGB", "RBC"],
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      boundaryGap: false,
+      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    },
+    yAxis: [
+      {
+        type: "value",
+        name: "RBC(x10^12/L)", //单位
+        nameLocation: "center", // (单位个也就是在在Y轴的最顶部)
+        //单位的样式设置
+        nameTextStyle: {
+          padding: [0, 0, 20, 0], //间距分别是 上 右 下 左
+        },
+      },
+    ],
+    series: [
+      {
+        name: "WBC",
+        type: "line",
+
+        data: [120, 132, 101, 134, 90, 230, 210],
+      },
+      {
+        name: "HGB",
+        type: "line",
+
+        data: [220, 182, 191, 234, 290, 330, 310],
+      },
+
+      {
+        name: "RBC",
+        type: "line",
+
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+      },
+    ],
+  };
+
+  useEffect(() => {
+    // 创建一个echarts实例，返回echarts实例。不能在单个容器中创建多个echarts实例
+    const chart = echarts.init(lineChartRef.current);
+
+    // 设置图表实例的配置项和数据
+    chart.setOption(options);
+
+    // 组件卸载
+    return () => {
+      //  销毁实例。实例销毁后无法再被使用
+      chart.dispose();
+    };
+  }, [dimensions]);
   const [selectedTags, setselectedTags] = useState({
     Sex: "initial",
     BMIRange: "initial",
@@ -356,7 +429,7 @@ const ControlAndDisplay: React.FC = () => {
           </div>
         </CardContent>
 
-        <div className=" tag-wapper grid gap-2 justify-items-start lg:grid-cols-3 md:grid-rows-2 grid-rows-5 m-2">
+        <div className=" tag-wapper grid justify-items-start lg:grid-cols-3 md:grid-cols-2 grid-cols-1 m-2">
           {Object.keys(selectedTags).map((value, index) => {
             if (
               selectedTags[
@@ -372,7 +445,7 @@ const ControlAndDisplay: React.FC = () => {
                 <Tag
                   color="#2db7f5"
                   key={index}
-                  className="truncate text-xl w-full text-center"
+                  className="mt-2 truncate text-xl w-full text-center"
                   closable
                   onClose={() => {
                     let newSelectedTags = {
@@ -428,7 +501,7 @@ const ControlAndDisplay: React.FC = () => {
           ></div>
         </CardHeader>
         <div className="w-full p-4 grid lg:grid-cols-8 gap-4 md:lg:grid-cols-8 gap-4 sm:grid-cols-1">
-          <div className="lg:col-span-2 md:col-span-2 sm:col-span-1">
+          <div className=" mt-2 lg:col-span-2 md:col-span-2 sm:col-span-1">
             <h1 className="">Top 5 Diagnosis Methods</h1>
             <Table>
               <TableHeader>
@@ -477,7 +550,24 @@ const ControlAndDisplay: React.FC = () => {
               </TableBody>
             </Table>
           </div>
-          <div className="w-full h-28 lg:col-span-6 md:col-span-6 sm:col-span-1 bg-black"></div>
+          <div className="w-full lg:col-span-6 md:col-span-6 sm:col-span-1 ">
+            <h1 className="w-full mt-2 mb-2 size-7">Select Metric</h1>
+            <RadioGroup defaultValue="WBC" className="flex flex-row">
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="WBC" id="WBC" />
+                <Label htmlFor="WBC">WBC</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="HGB" id="HGB" />
+                <Label htmlFor="HGB">HGB</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="RBC" id="RBC" />
+                <Label htmlFor="RBC">RBC</Label>
+              </div>
+            </RadioGroup>
+            <div className="w-full min-h-80 mt-4" ref={lineChartRef}></div>
+          </div>
         </div>
       </Card>
     </>
