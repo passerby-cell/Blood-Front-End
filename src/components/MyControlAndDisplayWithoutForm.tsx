@@ -160,8 +160,8 @@ const ControlAndDisplay: React.FC = () => {
     Sex: "initial",
     BMIRange: "initial",
     Ethnicity: "initial",
-    startTime: "initial",
-    endTime: "initial",
+    startTime: "2020-01",
+    endTime: dayjs().format("YYYY-MM"),
   });
 
   const [initialValue, setinitialValue] = useState({
@@ -368,7 +368,7 @@ const ControlAndDisplay: React.FC = () => {
                   onClose={() => {
                     let newSelectedTags = {
                       ...selectedTags,
-                      [value]: "",
+                      [value]: "initial",
                     };
                     setselectedTags(newSelectedTags);
                     let newInitialValue = {
