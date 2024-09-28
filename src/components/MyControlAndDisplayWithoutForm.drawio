@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="C_-QVu3qpHaF1vo3nsoZ" name="第 1 页">
-        <mxGraphModel dx="2370" dy="3554" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="4104" dy="3756" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -93,7 +93,7 @@
                     <mxGeometry width="130" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="80" value="" style="group" vertex="1" connectable="0" parent="1">
-                    <mxGeometry x="-620" y="-460" width="2872" height="1551" as="geometry"/>
+                    <mxGeometry x="-690" y="-740" width="2872" height="1551" as="geometry"/>
                 </mxCell>
                 <mxCell id="34" value="选择Sex后逐次改变哪些值和组件" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;fontColor=#FFFFFF;" vertex="1" parent="80">
                     <mxGeometry x="1152" y="31" width="450" height="40" as="geometry"/>
