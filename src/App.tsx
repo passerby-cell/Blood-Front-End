@@ -8,6 +8,7 @@ import ControlAndDisplay from "./components/ControlAndDisplay";
 import { Card, CardHeader, CardTitle } from "./components/ui/card";
 import MyControlAndDisplay from "./components/MyControlAndDisplay";
 import MyControlAndDisplayWithoutForm from "./components/MyControlAndDisplayWithoutForm";
+import MyControlAndDisplayWithFormik from "./components/MyControlAndDisplayWithFormik";
 
 function App() {
   return (
@@ -98,6 +99,7 @@ function App() {
       <ControlAndDisplay />
       {/* <MyControlAndDisplay /> */}
       <MyControlAndDisplayWithoutForm />
+      <MyControlAndDisplayWithFormik />
     </>
   );
 }
